@@ -36,6 +36,7 @@ type Adminz struct {
 	healthy func() bool
 }
 
+// Creates a new Adminz "builder". Not safe to use until Build() is called.
 func New() *Adminz {
 	return &Adminz{
 		killfileTicker: time.NewTicker(time.Second),
@@ -43,7 +44,7 @@ func New() *Adminz {
 	}
 }
 
-// resume is called when the server is unkilled
+// Resume is called when the server is unkilled
 func (a *Adminz) Resume(resume func() error) *Adminz {
 	a.resume = resume
 	return a
@@ -68,12 +69,14 @@ func (a *Adminz) Servicez(servicez func() interface{}) *Adminz {
 	return a
 }
 
-// list of killfilePaths to check
+// Sets the list of killfilePaths to check.
 func (a *Adminz) KillfilePaths(killfilePaths []string) *Adminz {
 	a.killfilePaths = killfilePaths
 	return a
 }
 
+// Build initializes handlers and starts killfile checking. Make sure to
+// remember to call this!
 func (a *Adminz) Build() *Adminz {
 	// start killfile checking loop
 	if len(a.killfilePaths) != 0 {
@@ -90,7 +93,7 @@ func (a *Adminz) Build() *Adminz {
 	return a
 }
 
-// Generates the standard set of killfiles. Pass these to Init()
+// Generates the standard set of killfiles. Pass these to KillfilePaths
 func Killfiles(ports ...string) []string {
 	// the number of ports + the "all" killfile
 	var ret = make([]string, len(ports)+1)
