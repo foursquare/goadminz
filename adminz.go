@@ -79,7 +79,7 @@ func (a *Adminz) KillfilePaths(killfilePaths []string) *Adminz {
 // remember to call this!
 func (a *Adminz) Build() *Adminz {
 	// start killfile checking loop
-	if len(a.killfilePaths) != 0 {
+	if len(a.killfilePaths) > 0 {
 		go a.killfileLoop()
 	} else {
 		log.Print("Not checking killfiles.")
@@ -91,6 +91,12 @@ func (a *Adminz) Build() *Adminz {
 	log.Print("adminz registered")
 	log.Print("Watching paths for killfile: ", a.killfilePaths)
 	return a
+}
+
+func (a *Adminz) Stop() {
+	if a.killfileTicker != nil {
+		a.killfileTicker.Stop()
+	}
 }
 
 // Generates the standard set of killfiles. Pass these to KillfilePaths
@@ -121,11 +127,15 @@ func (a *Adminz) killfileLoop() {
 		next := a.checkKillfiles()
 		if current == false && next == true {
 			// If we are currently not running and the killfile is removed, call resume()
-			a.resume()
+			if a.resume != nil {
+				a.resume()
+			}
 			a.Killed.Set(next)
 		} else if current == true && next == false {
 			// If we are currently running and a killfile is dropped, call pause()
-			a.pause()
+			if a.pause != nil {
+				a.pause()
+			}
 			a.Killed.Set(next)
 		}
 		// If we hit neither of those, no state changed.
