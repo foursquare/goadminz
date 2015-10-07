@@ -126,15 +126,15 @@ func (a *Adminz) killfileLoop() {
 		current := a.Killed.Get()
 		next := a.checkKillfiles()
 		if current == false && next == true {
-			// If we are currently not running and the killfile is removed, call resume()
-			if a.resume != nil {
-				a.resume()
-			}
-			a.Killed.Set(next)
-		} else if current == true && next == false {
 			// If we are currently running and a killfile is dropped, call pause()
 			if a.pause != nil {
 				a.pause()
+			}
+			a.Killed.Set(next)
+		} else if current == true && next == false {
+			// If we are currently not running and the killfile is removed, call resume()
+			if a.resume != nil {
+				a.resume()
 			}
 			a.Killed.Set(next)
 		}
