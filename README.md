@@ -13,7 +13,7 @@ is defined as a set of conditions:
 
 A `killfile` is a file on disk that indicates a server should appear to be
 unhealthy. Generally this is used during shutdown or startup or during
-a maintance period. `Killfiles()` is provided to generate a default set.
+a maintenance period. `Killfiles()` is provided to generate a default set.
 Killfiles are checked every second for existence.
 
 `Pause()` is called when the service first sees a killfile.
